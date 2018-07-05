@@ -1,9 +1,10 @@
 
+const spacing = 120;
 function Obstacle()
 {
-  var topRand = Math.abs(random(170,height) - 120);
+  var topRand = Math.abs(random(170,height) - spacing);
   this.top = topRand;
-  this.bottom = height - (this.top + 120);
+  this.bottom = height - (this.top + spacing);
   this.x = width;
   this.width  = 30;
   this.speed = 3;

@@ -1,14 +1,21 @@
 
-var bird;
+const population = 250;
+var bird = [];
 var paused;
 var obs = [];
 var score = 0;
 var maxScore = 0;
+var deadBirds = [];
+var slider;
 
 function setup()
 {
   createCanvas(600,700);
-  bird = new Bird();
+
+  slider = createSlider(1,100,1);
+
+  for(let i=0;i<population;i++)
+    bird[i] = new Bird();
 }
 
 function draw()
@@ -16,52 +23,69 @@ function draw()
     background(240);
     // sky blue 0-191-255
 
-    if(!paused)
+    if(bird.length == 0)
+      restart();
+
+    for(let x = 0; x < slider.value();x++)
     {
-      if(frameCount % 100 == 0)
+      if(!paused)
       {
-        obs.push(new Obstacle());
-      }
-
-      bird.update();
-      
-      if(obs.length > 0)
-        bird.predict(obs);
-
-      for(let x=obs.length-1;x >= 0;x--)
-      {
-        obs[x].update();
-
-        if(obs[x].collides(bird))
+        if(frameCount % 100 == 0)
         {
-          this.paused = true;
-          restart();
-          //setTimeout(restart,1500);
-        }
-        else {
-          if(obs[x].pass(bird))
-              score++;
+          obs.push(new Obstacle());
         }
 
-        if(obs[x].offscreen())
+        for(let i=bird.length-1;i>=0;i--)
         {
-          obs.splice(x,1);
+          bird[i].update();
+          if(obs.length > 0)
+            bird[i].predict(obs);
+        }
+
+        for(let x=obs.length-1;x >= 0;x--)
+        {
+          obs[x].update();
+
+
+          for(let j=bird.length-1;j>=0;j--)
+          {
+            if(obs[x].collides(bird[j]))
+            {
+              deadBirds.push(bird.splice(j,1)[0]);
+
+              // The game was passed and restarted when the bird hit a pipe but
+              // now for GA we need to keep the game moving for rest of the population
+              //this.paused = true;
+              //restart();
+              //setTimeout(restart,1500);
+            }
+            else {
+              if(obs[x].pass(bird[j]))
+                  score++;
+            }
+          }
+          if(obs[x].offscreen())
+          {
+            obs.splice(x,1);
+          }
         }
       }
     }
 
-    for(let x=obs.length-1;x >= 0;x--)
+    for(let o of obs)
     {
-      obs[x].show();
+      o.show();
     }
 
-    bird.show();
+    for(let b of bird)
+      b.show();
+
     showScore();
 }
 
 function restart()
 {
-  bird.reset();
+  nextGeneration();
   resetGame();
   loop();
 }
@@ -69,6 +93,7 @@ function restart()
 function resetGame()
 {
     obs = [];
+    deadBirds = [];
     paused = false;
     maxScore = max(score,maxScore);
     score = 0;

@@ -6,21 +6,34 @@ function preload()
   birdImg = loadImage("https://raw.githubusercontent.com/prasadchelsea33/FlappyBirdClone/master/assets/bird.png");
 }
 
-function Bird()
+class Bird
 {
-  this.x = width/2;
-  this.y = height/2;
-  this.yvelocity = 0;
-  this.gravity = 0.3;
-  this.brain = new NeuralNetwork(4,4,1);
+  constructor(brain)
+  {
+    this.x = width/2;
+    this.y = height/2;
+    this.yvelocity = 0;
+    this.gravity = 0.3;
+    this.gascore = 0;
+    this.fitness = 0;
 
-  this.show = function()
+    if(brain)
+    {
+      this.brain = brain.copy();
+    }
+    else {
+      this.brain = new NeuralNetwork(4,4,2);
+    }
+  }
+
+  show()
   {
     fill(0);
     image(birdImg,this.x,this.y,80,80);
   }
 
-  this.predict = function(obs)
+  // uses neural NeuralNetwork to predict birds moves (which are a lift or not)
+  predict(obs)
   {
       var closestObs = this.closestObstacle(obs);
       var inputs = [];
@@ -29,15 +42,16 @@ function Bird()
       inputs[2] = closestObs.bottom / height;
       inputs[3] = closestObs.x / width;
 
-      let output = this.brain.feedforward(inputs);
+      let output = this.brain.predict(inputs);
 
-      if(output < 0.5)
+      if(output[0] > 0.5)
       {
         this.lift();
       }
   }
 
-  this.closestObstacle = function(obs)
+  // figures out the closed pipe in front of the bird
+  closestObstacle(obs)
   {
     let closestObs = obs[0];
     let closestDistance = Infinity;
@@ -48,7 +62,7 @@ function Bird()
 
       if(distance < closestDistance)
       {
-        closestObstacle = obs[x];
+        closestObs = obs[x];
         closestDistance = distance;
       }
     }
@@ -56,17 +70,28 @@ function Bird()
     return closestObs;
   }
 
-  this.update = function()
+  update()
   {
+    this.gascore++;
     this.yvelocity += this.gravity;
     this.yvelocity *= 0.99;
     this.y += this.yvelocity;
 
-    if(this.y > height || this.y < -80)
+    // when bird hits the bottom keep them there
+    if(this.y >= height-45)
     {
-      this.reset();
+      this.y=height-45;
+      this.yvelocity = 0;
     }
 
+    // when bird hits the top keep them there
+    if(this.y <= -25)
+    {
+        this.y = -25;
+        this.yvelocity = 0;
+    }
+
+    // regulate the velocity
     if(this.yvelocity >= 10)
       this.yvelocity = 10;
     if(this.yvelocity <= -10)
@@ -74,7 +99,7 @@ function Bird()
 
   }
 
-  this.reset = function()
+  reset()
   {
     this.x = width/2;
     this.y = height/2;
@@ -82,8 +107,13 @@ function Bird()
     obs = [];
   }
 
-  this.lift = function()
+  lift()
   {
     this.yvelocity += -10;
+  }
+
+  mutate(rate)
+  {
+    this.brain.mutate(rate);
   }
 }
