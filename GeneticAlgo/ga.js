@@ -6,6 +6,8 @@
 
     for(let i=0;i<population;i++)
       bird[i] = pickBird();
+
+    deadBirds = [];
   }
 
   // picks bird for reproduction on random
@@ -37,8 +39,6 @@
     {
       sum += b.gascore;
     }
-
-    //console.log(sum);
 
     for(let b of deadBirds)
     {

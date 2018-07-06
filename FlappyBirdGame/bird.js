@@ -6,6 +6,7 @@ function preload()
   birdImg = loadImage("https://raw.githubusercontent.com/prasadchelsea33/FlappyBirdClone/master/assets/bird.png");
 }
 
+
 class Bird
 {
   constructor(brain)
@@ -22,12 +23,13 @@ class Bird
       this.brain = brain.copy();
     }
     else {
-      this.brain = new NeuralNetwork(4,4,2);
+      this.brain = new NeuralNetwork(5,8,2);
     }
   }
 
   show()
   {
+    stroke(0);
     fill(0);
     image(birdImg,this.x,this.y,80,80);
   }
@@ -35,16 +37,24 @@ class Bird
   // uses neural NeuralNetwork to predict birds moves (which are a lift or not)
   predict(obs)
   {
-      var closestObs = this.closestObstacle(obs);
+      var closest = this.closestObstacle(obs);
+
       var inputs = [];
+      // inputs[0] = map(closestObs.x,this.x,width,0,1);
+      // inputs[1] = map(closestObs.top,0,height,0,1);
+      // inputs[2] = map(closestObs.bottom,0,height,0,1);
+      // inputs[3] = map(this.y+40,0,height,0,1);
+      // inputs[4] = map(this.yvelocity,-10,10,0,1);
+
       inputs[0] = this.y / height;
-      inputs[1] = closestObs.top / height;
-      inputs[2] = closestObs.bottom / height;
-      inputs[3] = closestObs.x / width;
+      inputs[1] = closest.top / height;
+      inputs[2] = closest.bottom / height;
+      inputs[3] = closest.x / width;
+      inputs[4] = this.yvelocity / 10;
 
       let output = this.brain.predict(inputs);
 
-      if(output[0] > 0.5)
+      if(output[0] > output[1])
       {
         this.lift();
       }
@@ -53,14 +63,14 @@ class Bird
   // figures out the closed pipe in front of the bird
   closestObstacle(obs)
   {
-    let closestObs = obs[0];
+    let closestObs = null;
     let closestDistance = Infinity;
 
     for(let x = 0; x < obs.length; x++)
     {
-      let distance = obs[x].x - this.x;
+      let distance = (obs[x].x + obs[x].width) - this.x;
 
-      if(distance < closestDistance)
+      if(distance < closestDistance && distance > 0)
       {
         closestObs = obs[x];
         closestDistance = distance;
@@ -72,7 +82,6 @@ class Bird
 
   update()
   {
-    this.gascore++;
     this.yvelocity += this.gravity;
     this.yvelocity *= 0.99;
     this.y += this.yvelocity;
@@ -97,6 +106,7 @@ class Bird
     if(this.yvelocity <= -10)
       this.yvelocity = -10;
 
+    this.gascore++;
   }
 
   reset()

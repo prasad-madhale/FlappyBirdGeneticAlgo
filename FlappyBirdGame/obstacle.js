@@ -1,5 +1,5 @@
 
-const spacing = 120;
+const spacing = 175;
 function Obstacle()
 {
   var topRand = Math.abs(random(170,height) - spacing);

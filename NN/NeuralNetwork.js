@@ -1,3 +1,4 @@
+// Other techniques for learning
 
 class ActivationFunction {
   constructor(func, dfunc) {
@@ -174,5 +175,7 @@ class NeuralNetwork {
     this.bias_h.map(mutate);
     this.bias_o.map(mutate);
   }
+
+
 
 }

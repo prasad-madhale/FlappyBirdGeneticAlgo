@@ -1,5 +1,5 @@
 
-const population = 250;
+const population = 500;
 var bird = [];
 var paused;
 var obs = [];
@@ -7,12 +7,13 @@ var score = 0;
 var maxScore = 0;
 var deadBirds = [];
 var slider;
+var count = 0;
 
 function setup()
 {
   createCanvas(600,700);
 
-  slider = createSlider(1,100,1);
+  slider = createSlider(1,10,1);
 
   for(let i=0;i<population;i++)
     bird[i] = new Bird();
@@ -23,17 +24,19 @@ function draw()
     background(240);
     // sky blue 0-191-255
 
-    if(bird.length == 0)
-      restart();
 
     for(let x = 0; x < slider.value();x++)
     {
+      if(bird.length == 0)
+        restart();
+
       if(!paused)
       {
-        if(frameCount % 100 == 0)
+        if(count % 75 == 0)
         {
           obs.push(new Obstacle());
         }
+        count++;
 
         for(let i=bird.length-1;i>=0;i--)
         {
@@ -64,6 +67,7 @@ function draw()
                   score++;
             }
           }
+
           if(obs[x].offscreen())
           {
             obs.splice(x,1);
@@ -92,8 +96,8 @@ function restart()
 
 function resetGame()
 {
+    count = 0;
     obs = [];
-    deadBirds = [];
     paused = false;
     maxScore = max(score,maxScore);
     score = 0;
@@ -119,8 +123,8 @@ function keyPressed()
 
 function showScore()
 {
+  fill(0);
   textSize(25);
   text("Score: "+score,50,50);
-
   text("Highscore: "+maxScore,50,100);
 }
