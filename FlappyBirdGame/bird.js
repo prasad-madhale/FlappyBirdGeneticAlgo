@@ -86,18 +86,11 @@ class Bird
     this.yvelocity *= 0.99;
     this.y += this.yvelocity;
 
-    // when bird hits the bottom keep them there
-    if(this.y >= height-45)
-    {
-      this.y=height-45;
-      this.yvelocity = 0;
-    }
-
     // when bird hits the top keep them there
     if(this.y <= -25)
     {
-        this.y = -25;
-        this.yvelocity = 0;
+      this.y = -25;
+      this.yvelocity = 0;
     }
 
     // regulate the velocity
@@ -108,6 +101,18 @@ class Bird
 
     this.gascore++;
   }
+
+  offscreen()
+  {
+    // when bird hits the bottom
+    if(this.y >= height-45)
+    {
+      return true;
+    }
+
+    return false;
+  }
+
 
   reset()
   {

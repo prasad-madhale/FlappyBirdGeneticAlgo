@@ -1,18 +1,16 @@
 
-const population = 500;
-var bird = [];
+var bird;
 var paused;
 var obs = [];
 var score = 0;
 var maxScore = 0;
-var deadBirds = [];
 var slider;
 var count = 0;
 var birdJSON;
 
 function preload()
 {
-  birdJSON = loadJSON("bestBird.json");
+  birdJSON = loadJSON("bestBird2.json");
 }
 
 function setup()
@@ -20,74 +18,65 @@ function setup()
   createCanvas(600,700);
   slider = createSlider(1,10,1);
 
-  for(let i=0;i<population;i++)
-    bird[i] = new Bird();
+  console.log(birdJSON);
+
+  // let birdBrain = NeuralNetwork.deserialize(birdJSON);
+  bird = new Bird();
 }
 
 function draw()
 {
-    background(240);
-    // sky blue 0-191-255
+  background(240);
+  // sky blue 0-191-255
 
-    for(let x = 0; x < slider.value();x++)
+  for(let x = 0; x < slider.value();x++)
+  {
+    if(bird.length == 0)
+      restart();
+
+    if(!paused)
     {
-      if(bird.length == 0)
-        restart();
-
-      if(!paused)
+      if(count % 75 == 0)
       {
-        if(count % 75 == 0)
+        obs.push(new Obstacle());
+      }
+      count++;
+
+      bird.update()
+      bird.predict(obs);
+
+      for(let x=obs.length-1;x >= 0;x--)
+      {
+        obs[x].update();
+
+        if(obs[x].collides(bird) || bird.offscreen())
         {
-          obs.push(new Obstacle());
+          restart();
         }
-        count++;
-
-        for(let i=bird.length-1;i>=0;i--)
-        {
-          bird[i].update();
-          if(obs.length > 0)
-            bird[i].predict(obs);
-        }
-
-        for(let x=obs.length-1;x >= 0;x--)
-        {
-          obs[x].update();
-
-
-          for(let j=bird.length-1;j>=0;j--)
-          {
-            if(obs[x].collides(bird[j]) || bird[j].offscreen())
-            {
-              deadBirds.push(bird.splice(j,1)[0]);
-            }
-            else {
-              if(obs[x].pass(bird[j]))
-                  score++;
-            }
-          }
-
-          if(obs[x].offscreen())
-          {
-            obs.splice(x,1);
-          }
+        else {
+          if(obs[x].pass(bird))
+              score++;
         }
       }
+
+      if(obs[x].offscreen())
+      {
+        obs.splice(x,1);
+      }
     }
+  }
 
-    for(let o of obs)
-    {
-      o.show();
-    }
+  for(let o of obs)
+  {
+    o.show();
+  }
 
-    for(let b of bird)
-      b.show();
-
-    showScore();
+  bird.show();
+  showScore();
 }
 
 function restart()
 {
-  nextGeneration();
   resetGame();
   loop();
 }
@@ -142,7 +131,6 @@ function keyPressed()
 function loadBird(bestBirdJSON)
 {
   let bestBird = NeuralNetwork.deserialize(bestBirdJSON);
-  population = 1;
   bird[0] = new Bird(bestBird);
 }
 
