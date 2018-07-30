@@ -1,26 +1,57 @@
+
 <html>
 <head>
   <title> FlappyBirdClone </title>
 
-  <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/p5.min.js"></script>
-  <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/addons/p5.dom.min.js"></script>
-  <script type="text/javascript" src="trainedBird.js"></script>
+  <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/p5.js"></script>
+  <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/addons/p5.dom.js"></script>
+  <script type="text/javascript" src="game.js"></script>
   <script type="text/javascript" src="bird.js"></script>
   <script type="text/javascript" src="obstacle.js"></script>
   <script type="text/javascript" src="../NN/nn.js"></script>
   <script type="text/javascript" src="../NN/matrix.js"></script>
+  <script type="text/javascript" src="../GeneticAlgo/ga.js"></script>
   <link rel="shortcut icon" type="image/png" href="./assets/favicon.ico">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 </head>
 
 <body>
-<div class="col-lg-6">
-  <p>
-    Click 'Space' bar to jump.<br>
-    Click 'P' to pause the game.<br>
-    Click 'E' to restart.<br>
-  </p>
+
+
+
+<div class="jumbotron container-fluid">
+  <div class = "col-lg-6">
+    <h1>Flappy Bird Game Playing Bot (Training)</h1>
+    <p> Demonstrates a Flappy Bird game playing bot trained using Genetic Algorithm
+      and a FeedForward Neural Network developed from scratch using p5.js.</p>
+    <p>
+      <a class="btn btn-info btn-lg" href="#canvas" role="button">Go To the Game</a>
+      <a class="btn btn-success btn-lg" href="trainedBird.html" role="button">Watch Trained Bird in Action</a>
+      <a class="btn btn-success btn-lg" href="https://github.com/prasadchelsea33/NeuralNetworkJS/blob/master/README.md" role="button" target="_blank">Neural Network Notes</a>
+    </p>
+  </div>
 </div>
-<div>
-  <button class="btn-sucess" href="index.html">Training</button>
+
+<div class="container col-lg-6" id="canvas">
+  <blockquote class="bg-success">
+  <h3> Controls </h3>
+  <dl class="dl-horizontal">
+    <dt>Pause</dt>
+    <dd>Pause the game using the 'P' key.</dd>
+    <dt>Restart</dt>
+    <dd>Restart the game using the 'E' key.</dd>
+    <dt>Save the best bird</dt>
+    <dd>Saves the best bird currently in the game.Press 'S' to save the best bird.</dd>
+    <dt>Speed Up</dt>
+    <dd>Speed up the training process by using the slider bar below the game.
+      The current speed is displayed next to the slider</dd>
+  </dl>
+</blockquote>
+
+<p class="alert alert-danger" role="alert">
+  When the best bird is saved it is stored in the Downloads folder by default.
+  The saved best bird 'bestBird.json' has to be moved to the ./FlappyBirdGame directory.
+</p>
 </div>
+
 </body>

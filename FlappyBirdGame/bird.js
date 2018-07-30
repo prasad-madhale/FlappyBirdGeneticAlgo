@@ -1,12 +1,14 @@
 
-var birdImg;
+var birdImge
 
-function preload()
-{
-  birdImg = loadImage("https://raw.githubusercontent.com/prasadchelsea33/FlappyBirdClone/master/assets/bird.png");
-}
-
-
+// each instance of class Bird represents a birds
+// bird has the following attributes:
+  // x - x position
+  // y - y position
+  // yvelocity - bird's velocity in y direction
+  // gravity - gravitational force
+  // gascore - bird's score
+  // fitness - bird's fitness
 class Bird
 {
   constructor(brain)
@@ -17,21 +19,25 @@ class Bird
     this.gravity = 0.3;
     this.gascore = 0;
     this.fitness = 0;
+    birdImge = birdImg;
 
+    // if a brain is provided as argument a copy of that is used
     if(brain)
     {
       this.brain = brain.copy();
     }
+    // new brain is created if not provided
     else {
       this.brain = new NeuralNetwork(5,8,2);
     }
   }
 
+  // displays the bird on the canvas
   show()
   {
     stroke(0);
     fill(0);
-    image(birdImg,this.x,this.y,80,80);
+    image(birdImge,this.x,this.y,80,80);
   }
 
   // uses neural NeuralNetwork to predict birds moves (which are a lift or not)
@@ -40,11 +46,6 @@ class Bird
       var closest = this.closestObstacle(obs);
 
       var inputs = [];
-      // inputs[0] = map(closestObs.x,this.x,width,0,1);
-      // inputs[1] = map(closestObs.top,0,height,0,1);
-      // inputs[2] = map(closestObs.bottom,0,height,0,1);
-      // inputs[3] = map(this.y+40,0,height,0,1);
-      // inputs[4] = map(this.yvelocity,-10,10,0,1);
 
       inputs[0] = this.y / height;
       inputs[1] = closest.top / height;
@@ -80,6 +81,7 @@ class Bird
     return closestObs;
   }
 
+  // update birds position, velocity in the world
   update()
   {
     this.yvelocity += this.gravity;
@@ -102,6 +104,7 @@ class Bird
     this.gascore++;
   }
 
+  // returns true if bird is off the screen else false
   offscreen()
   {
     // when bird hits the bottom
@@ -113,7 +116,7 @@ class Bird
     return false;
   }
 
-
+  // resets bird's position and velocity in the canvas world
   reset()
   {
     this.x = width/2;
@@ -122,13 +125,17 @@ class Bird
     obs = [];
   }
 
+  // performs the jump
   lift()
   {
     this.yvelocity += -10;
   }
 
+  // performs the mutate step in the genetic algorithm
   mutate(rate)
   {
+    // mutate changes the weights of various layers of the neural network to obtain a
+    // mutated brain(neural network)
     this.brain.mutate(rate);
   }
 }

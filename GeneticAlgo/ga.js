@@ -2,8 +2,11 @@
   // creates new generation of birds
   function nextGeneration()
   {
+    // calculates fitness of each bird before creating new generation
     calculateFitness();
 
+    // picks which birds to carry forward to the new generation out of the
+    // dead birds
     for(let i=0;i<population;i++)
       bird[i] = pickBird();
 

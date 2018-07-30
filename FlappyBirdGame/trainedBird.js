@@ -1,27 +1,25 @@
 
-var bird;
+var bird = [];
 var paused;
 var obs = [];
 var score = 0;
 var maxScore = 0;
-var slider;
 var count = 0;
 var birdJSON;
+var birdImg;
+var speed;
 
 function preload()
 {
-  birdJSON = loadJSON("bestBird2.json");
+  birdJSON = loadJSON('bestBird.json');
+  birdImg = loadImage('./assets/bird.png');
 }
 
 function setup()
 {
   createCanvas(600,700);
-  slider = createSlider(1,10,1);
 
-  console.log(birdJSON);
-
-  // let birdBrain = NeuralNetwork.deserialize(birdJSON);
-  bird = new Bird();
+  loadBird(birdJSON);
 }
 
 function draw()
@@ -29,36 +27,48 @@ function draw()
   background(240);
   // sky blue 0-191-255
 
-  for(let x = 0; x < slider.value();x++)
+
+  // speed up the game
+  for(let x = 0; x < 1;x++)
   {
+    // restart on death of bird
     if(bird.length == 0)
       restart();
 
+    // when game is unpaused
     if(!paused)
     {
+      // create obstacles per 75 frames
       if(count % 75 == 0)
       {
         obs.push(new Obstacle());
       }
       count++;
 
-      bird.update()
-      bird.predict(obs);
+      // updates bird position,speed
+      bird[0].update()
+      // predicts the next move based on NeuralNetwork brain
+      bird[0].predict(obs);
 
+      // draw all the obstacles
       for(let x=obs.length-1;x >= 0;x--)
       {
+        // update all obstacle position
         obs[x].update();
 
-        if(obs[x].collides(bird) || bird.offscreen())
+        // handles collision between bird and obstacles
+        if(obs[x].collides(bird[0]) || bird[0].offscreen())
         {
           restart();
         }
         else {
-          if(obs[x].pass(bird))
+          // increases score when bird passes through an obstacle
+          if(obs[x].pass(bird[0]))
               score++;
         }
       }
 
+      // delete obstacles when they go offscreen
       if(obs[x].offscreen())
       {
         obs.splice(x,1);
@@ -66,20 +76,25 @@ function draw()
     }
   }
 
+  // display all obstacles
   for(let o of obs)
   {
     o.show();
   }
 
-  bird.show();
+  // display the bird
+  bird[0].show();
+  // display scores
   showScore();
 }
+
 
 function restart()
 {
   resetGame();
   loop();
 }
+
 
 function resetGame()
 {
@@ -90,13 +105,9 @@ function resetGame()
     score = 0;
 }
 
+// handle key press events
 function keyPressed()
 {
-  if(key == ' ')
-  {
-    bird.lift();
-  }
-
   if(key == 'P')
   {
     paused = !paused;
@@ -106,31 +117,12 @@ function keyPressed()
   {
     restart();
   }
-
-  if(key == 'S')
-  {
-    let bestBird;
-    let max = -Infinity;
-
-    for(let b of bird)
-    {
-      let birdScore = b.gascore;
-
-      if(birdScore > max)
-      {
-        bestBird = b;
-        max = birdScore;
-      }
-    }
-
-    console.log("Saved the best bird yet!");
-    saveJSON(bestBird.brain,"bestBird.json");
-  }
 }
 
-function loadBird(bestBirdJSON)
+// loads the bird brain from JSON file
+function loadBird(birdJSON)
 {
-  let bestBird = NeuralNetwork.deserialize(bestBirdJSON);
+  let bestBird = NeuralNetwork.deserialize(birdJSON);
   bird[0] = new Bird(bestBird);
 }
 
