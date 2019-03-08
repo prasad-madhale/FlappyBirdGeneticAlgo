@@ -1,7 +1,7 @@
 # Flappy Bird playing agent using Genetic Algorithm
 Demonstrates a Flappy Bird game playing bot trained using Genetic Algorithm and a FeedForward Neural Network developed from scratch using p5.js.
 
-[Play the Game](https://prasadchelsea33.github.io/FlappyBirdGeneticAlgo/FlappyBirdGame/)
+[Play the Game](https://prasad-madhale.github.io/FlappyBirdGeneticAlgo/FlappyBirdGame/)
 
 #### Genetic Algorithm Overview
 1. Initially a large population of Birds (around 500) is spawned in the game. They start taking random decisions which can be either to jump or not jump.
