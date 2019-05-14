@@ -1,6 +1,7 @@
 # Flappy Bird playing agent using Genetic Algorithm
 Demonstrates a Flappy Bird game playing bot trained using Genetic Algorithm and a FeedForward Neural Network developed from scratch using p5.js.
 
+![Demo](https://github.com/prasad-madhale/FlappyBirdGeneticAlgo/blob/master/gifs/recording.gif)
 [Play the Game](https://prasad-madhale.github.io/FlappyBirdGeneticAlgo/FlappyBirdGame/)
 
 #### Genetic Algorithm Overview
